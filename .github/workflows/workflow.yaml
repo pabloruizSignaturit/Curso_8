@@ -31,6 +31,7 @@ jobs:
         role-session-name: PabloRuizSession
         aws-region: "eu-west-1"
 
+<<<<<<< HEAD
     - name: Login to Amazon ECR
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
@@ -49,3 +50,7 @@ jobs:
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
     
+=======
+    - name: Mostramos nombre de la imagen de Docker
+      run: echo ${{ github.event.repository.name }}:latest .
+>>>>>>> 8d897be33adb671813837a866fe721f40827be67
