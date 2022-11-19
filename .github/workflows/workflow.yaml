@@ -37,6 +37,7 @@ jobs:
         context: .
         platforms: linux/amd64
         push: true
-        tags: "ghcr.io/username/reponame:tag"
+        tags: "ghcr.io/username/reponame:${{ github.sha }}"
       
+
     
