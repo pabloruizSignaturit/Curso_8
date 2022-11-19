@@ -24,8 +24,28 @@ jobs:
     - name: Test unitarios
       run: go test ./...
 
-    - name: Creamos imagen de Docker
-      run: docker build -t ${{ github.event.repository.name }}:latest .
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: arn:aws:iam::268229342313:oidc-provider/token.actions.githubusercontent.com
+        role-session-name: PabloRuizSession
+        aws-region: "eu-west-1"
 
-    - name: Mostramos nombre de la imagen de Docker
-      run: echo ${{ github.event.repository.name }}:latest .
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push the image to Amazon ECR
+      id: build-image
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ secrets.REPO_NAME }}
+        IMAGE_TAG: 1.0
+      run: |
+        # Build a docker container and push it to ECR 
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+        echo "Pushing image to ECR..."
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+    
